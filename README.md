@@ -1,4 +1,4 @@
-# Exercism playground
+# Exercism playground [![Build Status](https://travis-ci.org/NikiforovAll/exercism-playground.svg?branch=master)](https://travis-ci.org/NikiforovAll/exercism-playground)
 
 This project include dev container with preinstalled exercism.exe in it.
 
