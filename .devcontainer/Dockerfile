@@ -16,7 +16,11 @@ COPY library-scripts/common-debian.sh /tmp/library-scripts/
 RUN /bin/bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/* &&  rm -rf /tmp/library-scripts
 
+RUN chsh -s $(which zsh)
+
 # Install exercism CLI
 RUN wget https://github.com/exercism/cli/releases/download/v3.0.5/exercism-linux-64bit.tgz && \
     tar xzf exercism-linux-64bit.tgz && \
     mv exercism /usr/local/bin/
+
+RUN mkdir -p /home/${USERNAME}/exercism

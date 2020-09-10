@@ -21,11 +21,18 @@
 		"ms-dotnettools.csharp",
 		"editorconfig.editorconfig",
 		"naumovs.trailing-semicolon",
-		"k--kato.docomment"
+		"k--kato.docomment",
+		"eamodio.gitlens",
+		"mhutchie.git-graph",
+		"codezombiech.gitignore",
+		"yzhang.markdown-all-in-one",
+		"tintoy.msbuild-project-tools",
+		"nikiforovall.surround-with-csharp",
+		"dotjoshjohnson.xml"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [5000, 5001],
+	// "forwardPorts": [5000, 5001],
 
     // Next, after running the command above, uncomment lines in the 'mounts' and 'remoteEnv' lines below,
 	// and open / rebuild the container so the settings take effect.
@@ -33,12 +40,13 @@
 	"mounts": [
 		// "source=${env:HOME}${env:USERPROFILE}/.aspnet/https,target=/home/vscode/.aspnet/https,type=bind"
 	],
-	"remoteEnv": {
-	},
+	"remoteEnv": {},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "dotnet restore",
+	// "postCreateCommand": "mv -r /workspaces/Exercism /home/vscode/exercism",
 
 	// Comment this out to connect as a root instead.
-	"remoteUser": "vscode"
+	"remoteUser": "vscode",
+	"workspaceFolder": "/home/vscode/exercism",
+	"workspaceMount": "source=${localWorkspaceFolder}/,target=/home/vscode/exercism,type=bind,consistency=cached"
 }
