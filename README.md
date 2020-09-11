@@ -7,7 +7,8 @@ My profile: <https://exercism.io/profiles/NikiforovAll>
 ## Getting started
 
 1. Run devcontainer in vscode
-2. Run `.devcontainer/post-install.sh`
+2. Provide token `export EXERCISM_TOKEN=token`
+3. Run `.devcontainer/post-install.sh`
 
 ## Container configuration
 

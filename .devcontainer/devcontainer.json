@@ -28,7 +28,8 @@
 		"yzhang.markdown-all-in-one",
 		"tintoy.msbuild-project-tools",
 		"nikiforovall.surround-with-csharp",
-		"dotjoshjohnson.xml"
+		"dotjoshjohnson.xml",
+		"arthurwang.vsc-prolog"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -43,7 +44,7 @@
 	"remoteEnv": {},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "mv -r /workspaces/Exercism /home/vscode/exercism",
+	"postCreateCommand": "dotnet restore",
 
 	// Comment this out to connect as a root instead.
 	"remoteUser": "vscode",
