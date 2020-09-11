@@ -13,3 +13,8 @@ My profile: <https://exercism.io/profiles/NikiforovAll>
 ## Container configuration
 
 <https://code.visualstudio.com/docs/remote/create-dev-container#_configuration-edit-loop>
+
+
+### Learn Prolog
+
+<https://github.com/LearnPrologNow/lpn>
