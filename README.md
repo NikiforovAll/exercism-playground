@@ -8,12 +8,11 @@ My profile: <https://exercism.io/profiles/NikiforovAll>
 
 1. Run devcontainer in vscode
 2. Provide token `export EXERCISM_TOKEN=token`
-3. Run `.devcontainer/post-install.sh`
+<!-- 3. Run `.devcontainer/post-install.sh` -->
 
 ## Container configuration
 
 <https://code.visualstudio.com/docs/remote/create-dev-container#_configuration-edit-loop>
-
 
 ### Learn Prolog
 
