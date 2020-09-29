@@ -1,7 +1,10 @@
+#define DEBUG
+// #undef DEBUG
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using static RobotNameUtils;
 public class Robot
 {
     private Lazy<string> _name = Robot.Init();
@@ -9,60 +12,71 @@ public class Robot
 
     public void Reset()
     {
-        RobotRegistryRandomWithShift.Reset(Name);
+        RobotFactorySingletonProvider.Instance.Reset(Name);
         _name = Robot.Init();
     }
 
     private static Lazy<string> Init() => new Lazy<string>(
-        () => RobotRegistryRandomWithShift.Next());
+        () => RobotFactorySingletonProvider.Instance.Next());
 }
 
-internal static class RobotRegistryRandomWithShift
+internal interface IRobotNameFactory
+{
+    string Next();
+    void Reset(string robotName);
+}
+
+internal sealed class RobotFactorySingletonProvider
+{
+    static RobotFactorySingletonProvider() { }
+
+    private RobotFactorySingletonProvider() { }
+
+    #if DEBUG
+        public static IRobotNameFactory Instance { get; } = new RobotRegistryRandom();
+    #else
+        public static IRobotNameFactory Instance { get; } = new RobotRegistryRandomWithShift();
+    #endif
+
+}
+
+internal class RobotRegistryRandomWithShift : IRobotNameFactory
 {
     private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     private static readonly Dictionary<string, bool> _registry =
         ALPHABET.SelectMany(c => ALPHABET.Select(c2 => string.Concat(c, c2)))
-        .SelectMany(prefix => Enumerable.Range(100, 899).Select(d => prefix + d)).ToDictionary(name => name, _ => false);
-    internal static string Next()
+        .SelectMany(prefix => Enumerable.Range(0, MAX_ROBOT_NUMBER)
+                .Select(d => $"{prefix}{d}"))
+                .ToDictionary(name => RobotName($"{name:robotName}"), _ => false);
+    public string Next()
     {
-        var newName = RobotNameUtils.GenerateRandomRobotName(out var robotName)
-            && !_registry[robotName]
-            ? robotName
-            : _registry.First(kvp => !kvp.Value && kvp.Key != robotName).Key;
+        var newName = GenerateRandomRobotName(out var robotName) && !_registry[robotName]
+                ? robotName
+                : _registry.First(kvp => !kvp.Value && kvp.Key != robotName).Key;
         _registry[newName] = true;
         return newName;
     }
 
-    internal static void Reset(string robotName) => _registry[robotName] = false;
+    public void Reset(string robotName) => _registry[robotName] = false;
 
 }
 
-// This doesn't work when registry is almost field, StackOverflow exception
+// This doesn't work when registry is almost filled, StackOverflow exception
 // it could be rewritten without recursion, but probbing strategy is flawed
-internal static class RobotRegistryRandom
+internal class RobotRegistryRandom : IRobotNameFactory
 {
     private static readonly HashSet<string> _registry = new HashSet<string>();
-    internal static string Next() =>
+    public string Next() =>
         RobotNameUtils.GenerateRandomRobotName(out var rn) && Accept(rn)
             ? rn : Next();
-    internal static bool Accept(string robotName)
-    {
-        if (!_registry.Contains(robotName))
-        {
-            return false;
-        }
-        else
-        {
-            _registry.Add(robotName);
-            return true;
-        }
-    }
-    internal static void Reset(string robotName) => _registry.Remove(robotName);
+    public void Reset(string robotName) => _registry.Remove(robotName);
+    private bool Accept(string robotName) => _registry.Add(robotName);
 }
 
 internal static class RobotNameUtils
 {
+    public const int MAX_ROBOT_NUMBER = 1000;
     private static readonly Random _generator = new Random();
     private const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     internal static bool GenerateRandomRobotName(out string name)
@@ -70,9 +84,24 @@ internal static class RobotNameUtils
         var prefix = Enumerable.Repeat(int.MinValue, count: 2)
             .Select(_ => ALPHABET[_generator.Next(ALPHABET.Length)])
             .Aggregate(string.Empty, (curr, c) => curr + c);
-        name = $"{prefix}{_generator.Next(100, 999)}";
-        // could return $false if if it is not possible to generate
-        // next value
+        name = RobotName($"{prefix}{_generator.Next(0, MAX_ROBOT_NUMBER):robotNumber}");
         return true;
     }
+
+    internal static string RobotName(FormattableString name) =>
+        name.ToString(new RobotNameFormatter());
+}
+
+internal class RobotNameFormatter : IFormatProvider, ICustomFormatter
+{
+    public string Format(string format, object arg, IFormatProvider formatProvider) =>
+        format switch
+        {
+            "robotName" when arg is string str => $"{str[..2]}{str[2..].PadLeft(3, '0')}",
+            "robotNumber" => $"{arg:000}",
+            "robotPrefix" => arg.ToString().ToUpper(),
+            _ => arg.ToString()
+        };
+
+    public object GetFormat(Type formatType) => this;
 }
