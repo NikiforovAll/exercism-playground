@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 [Flags]
 public enum Allergen
@@ -19,20 +21,29 @@ public enum Allergen
 public class Allergies
 {
     private readonly int mask;
-    public Allergies(int mask) => this.mask = mask & MAX_MASK;
-    private static readonly int MAX_MASK = (Enum.GetValues(typeof(Allergen)).Cast<int>().Max() << 1) - 1;
+    private readonly Lazy<Allergen[]> scanner;
+    public Allergies(int mask)
+    {
+        this.mask = mask & MAX_MASK;
+        scanner = BuildScanner(this.mask);
+    }
+
+    private static readonly int MAX_MASK = BuildMask<Allergen>();
 
     public bool IsAllergicTo(Allergen allergen) =>
-        (((Allergen)Enum.ToObject(typeof(Allergen), mask)) & allergen) == allergen;
-    public Allergen[] List()
+        (((Allergen)mask) & allergen) == allergen;
+    public Allergen[] List() => scanner.Value;
+
+    private static Lazy<Allergen[]> BuildScanner(int mask)
     {
-        return ScanForAllergens(mask)
+        return new Lazy<Allergen[]>(() =>
+        ScanForAllergens(mask)
             .Select((a, i) =>
                 a % 2 == 0
                     ? Allergen.None
                     : (Allergen)(1 << i))
             .Where(a => a != Allergen.None)
-            .ToArray();
+            .ToArray());
 
         static IEnumerable<byte> ScanForAllergens(int mask)
         {
@@ -42,5 +53,13 @@ public class Allergies
                 mask >>= 1;
             }
         }
+    }
+
+    private static int BuildMask<T>() where T : Enum
+    {
+        Debug.Assert(typeof(T).GetCustomAttribute<FlagsAttribute>() != null);
+        var lastEnumFlag = Enum.GetValues(typeof(T)).Cast<int>().Max();
+        var allFlags = (lastEnumFlag << 1) - 1;
+        return allFlags;
     }
 }

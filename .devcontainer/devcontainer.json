@@ -12,18 +12,15 @@
 		"terminal.integrated.shell.linux": "/bin/bash"
 	},
 	"extensions": [
-		// dotnet
 		"ms-dotnettools.csharp",
 		"formulahendry.dotnet-test-explorer",
 		"nikiforovall.surround-with-csharp",
 		"eamodio.gitlens",
-		// MISC
 		"k--kato.docomment",
 		"yzhang.markdown-all-in-one",
 		"editorconfig.editorconfig",
 		"naumovs.trailing-semicolon",
-		// prolog
-		// "arthurwang.vsc-prolog"
+		"leopotam.csharpfixformat"
 	],
 	"postCreateCommand": "dotnet restore",
 	"workspaceFolder": "/root/exercism",
