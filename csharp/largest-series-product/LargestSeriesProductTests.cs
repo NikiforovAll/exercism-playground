@@ -6,9 +6,14 @@ using Xunit;
 public class LargestSeriesProductTests
 {
     [Fact]
+    public void Run()
+    {
+        Assert.Equal(18, LargestSeriesProductV2.GetLargestProduct("291345", 2));
+    }
+    [Fact]
     public void Finds_the_largest_product_if_span_equals_length()
     {
-        Assert.Equal(18, LargestSeriesProduct.GetLargestProduct("29", 2));
+        Assert.Equal(18, LargestSeriesProductV2.GetLargestProduct("29", 2));
     }
 
     [Fact]
