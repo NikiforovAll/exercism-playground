@@ -25,6 +25,9 @@ namespace Awaitable
             Range scanned = 0..0;
             do
             {
+                // TODO: try recursive tick to see how control flow will look like
+                // TODO: consider share state of the cursor between strategies (aka Scanned)
+                // TODO: consider to move multiplication logic to SlideStrategy and keep main flow nice and clean
                 var slide = new SlideStrategy(mem, scanned, span);
                 success = await slide;
                 if (success)

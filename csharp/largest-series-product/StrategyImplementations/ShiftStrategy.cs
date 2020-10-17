@@ -17,6 +17,7 @@ namespace Awaitable
         protected override async StrategyTask<bool> Run()
         {
             if (source.Span[span] == 0)
+                //TODO: move Scanned position
                 return false;
             Scanned = 1..(span + 1);
             return true;
