@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace Awaitable
 {
-    public class AsyncTicker
+    public class AsyncTicker<T>
     {
-        private readonly Func<StrategyTask<bool>> run;
-        private StrategyTask<bool> task;
+        private readonly Func<StrategyTask<T>> run;
+        private StrategyTask<T> task;
 
-        public AsyncTicker(Func<StrategyTask<bool>> run)
+        public AsyncTicker(Func<StrategyTask<T>> run)
         {
             this.run = run;
         }
@@ -17,10 +17,6 @@ namespace Awaitable
         {
             if (task?.Strategies != null && task.Strategies.Any(s => s.Status == StrategyStatus.InProgress))
             {
-                foreach (var strategy in task.Strategies)
-                {
-                    strategy.Tick();
-                }
                 return new StrategyResult(StrategyStatus.InProgress, null);
             }
 
@@ -30,7 +26,12 @@ namespace Awaitable
                 task.Continue();
 
             if (task.IsComplete)
-                return task.Result ? new StrategyResult(StrategyStatus.Done, null) : new StrategyResult(StrategyStatus.Failed, null);
+                // return task.Result ? new StrategyResult(StrategyStatus.Done, null) : new StrategyResult(StrategyStatus.Failed, null);
+                return task.Result switch
+                {
+                    null => new StrategyResult(StrategyStatus.Failed, null),
+                    _ => new StrategyResult(StrategyStatus.Done, null),
+                };
             return new StrategyResult(StrategyStatus.InProgress, task.Strategies);
         }
     }

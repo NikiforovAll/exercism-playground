@@ -1,15 +1,15 @@
 namespace Awaitable
 {
-    public abstract class Strategy : IStrategy
+    public abstract class Strategy<T> : IStrategy
     {
-        private readonly AsyncTicker ticker;
+        private readonly AsyncTicker<T> ticker;
 
         protected Strategy()
         {
-            ticker = new AsyncTicker(Run);
+            ticker = new AsyncTicker<T>(Run);
         }
 
-        protected abstract StrategyTask<bool> Run();
+        protected abstract StrategyTask<T> Run();
 
         public StrategyStatus Status { get; private set; }
 

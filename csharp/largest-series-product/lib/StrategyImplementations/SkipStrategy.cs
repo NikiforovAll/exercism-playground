@@ -1,13 +1,14 @@
 using System;
 using System.Threading.Tasks;
+#pragma warning disable CS1998
 
 namespace Awaitable
 {
-    internal class SkipStrategy : Strategy
+    internal class SkipStrategy : Strategy<bool>
     {
-        private Memory<byte> source;
+        private readonly ReadOnlyMemory<byte> source;
 
-        public SkipStrategy(Memory<byte> source)
+        public SkipStrategy(ReadOnlyMemory<byte> source)
         {
             this.source = source;
         }
@@ -15,12 +16,13 @@ namespace Awaitable
         protected override async StrategyTask<bool> Run()
         {
             var cnt = 0;
+            var wasSkipped = false;
             while (source.Span[cnt] == 0)
             {
-                Scanned = cnt++..;
+                wasSkipped = true;
+                Scanned = ++cnt..;
             }
-            return Scanned.End.Value < source.Length;
-
+            return wasSkipped;
         }
     }
 }

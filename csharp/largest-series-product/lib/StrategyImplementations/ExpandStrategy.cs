@@ -4,35 +4,39 @@ using System.Linq;
 
 namespace Awaitable
 {
-    public class ExpandStrategy : Strategy
+    public class ExpandStrategy : Strategy<bool>
     {
         private readonly int span;
 
-        public ExpandStrategy(Memory<byte> source, int span)
+        public ExpandStrategy(ReadOnlyMemory<byte> source, int span)
         {
-            Source = source;
+            this.source = source;
             this.span = span;
         }
 
-        public Memory<byte> Source { get; }
+        private readonly ReadOnlyMemory<byte> source;
 
         public Range Scanned;
 
+        /// <summary>
+        /// Next expanded window
+        /// </summary>
+        /// <returns><see langword="false"/> if operation not possible</returns>
         protected override async StrategyTask<bool> Run()
         {
             var end = 0;
             var start = 0;
-            while (end < Source.Length && (end - start) < span)
+            while (end < source.Length && (end - start) < span)
             {
-                if (Source.Span[end] == 0)
+                if (source.Span[end] == 0)
                 {
-                    var skip = new SkipStrategy(Source);
+                    var skip = new SkipStrategy(source);
                     var skipped = await skip;
                     start = skip.Scanned.Start.Value;
                     if (!skipped)
                         return false;
                 }
-                Scanned = start..end;
+                Scanned = start..(end + 1);
                 end++;
             }
             return true;

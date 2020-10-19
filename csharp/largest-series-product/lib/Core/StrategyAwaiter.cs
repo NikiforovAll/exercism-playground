@@ -15,7 +15,8 @@ namespace Awaitable
 
         public bool IsCompleted { get; private set; }
 
-        public bool GetResult() => Strategies == null || Strategies.All(x => x.Status == StrategyStatus.Done);
+        public bool GetResult() =>
+            Strategies == null || Strategies.All(x => x.Status == StrategyStatus.Done);
 
         public void OnCompleted(Action continuation)
         {

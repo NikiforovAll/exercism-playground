@@ -34,12 +34,12 @@ public class LargestSeriesProductTests
     [Fact]
     public void Run()
     {
-        Assert.Equal(20, LargestSeriesProductV2.GetLargestProduct("291345", 2, new TestWriter(output)));
+        Assert.Equal(20, LargestSeriesProductV2.GetLargestProduct<SlidingWindowStrategy>("291345", 2, new TestWriter(output)));
     }
     [Fact]
     public void Run2()
     {
-        Assert.Equal(23520, LargestSeriesProductV2.GetLargestProduct("73167176531330624919225119674426574742355349194934", 6));
+        Assert.Equal(23520, LargestSeriesProductV2.GetLargestProduct<SlidingWindowStrategy>("73167176531330624919225119674426574742355349194934", 6));
     }
 
     [Fact]
